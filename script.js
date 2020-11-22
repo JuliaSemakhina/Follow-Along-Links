@@ -1,36 +1,22 @@
-function debounce(func, wait = 20, immediate = true) {
-      var timeout;
-      return function() {
-        var context = this, args = arguments;
-        var later = function() {
-          timeout = null;
-          if (!immediate) func.apply(context, args);
-        };
-        var callNow = immediate && !timeout;
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-        if (callNow) func.apply(context, args);
-      };
-};
+const triggers = document.querySelectorAll('a');
+const highlight = document.createElement('span');
+highlight.classList.add('highlight');
+document.body.appendChild(highlight);
 
+function highlightLink() {
+ const linksCoords = this.getBoundingClientRect();
+ console.log(linksCoords);
 
-
-const sliderImages = document.querySelectorAll('.slide-in');
-
-function checkScroll(e) {
-  sliderImages.forEach(slideImage => {
-    //the center of the image
-    const slideInAt = (window.scrollY + window.innerHeight) - slideImage.height/2;
-    //the bottom of the image
-    const imageBottom = slideImage.offsetTop + slideImage.height;
-    const isHalfShown = slideInAt > slideImage.offsetTop;
-    const inNotScrolledPast = window.scrollY < imageBottom;
-    if(isHalfShown && inNotScrolledPast) {
-      slideImage.classList.add('active');
-    } else {
-      slideImage.classList.remove('active');
-    }
-  })
+ const coords = {
+  width: linksCoords.width, 
+  height: linksCoords.height,
+  top: linksCoords.top + window.scrollY,
+  left: linksCoords.left + window.scrollX
+ }
+;
+ highlight.style.width = `${coords.width}px`;
+ highlight.style.height = `${coords.height}px`;
+ highlight.style.transform = `translate(${coords.left}px, ${coords.top}px)`;
 }
 
-window.addEventListener('scroll', debounce(checkScroll));
+triggers.forEach(a => a.addEventListener('mouseenter', highlightLink));
